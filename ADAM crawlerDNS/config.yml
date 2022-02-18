@@ -1,0 +1,33 @@
+geoip:
+  country: /usr/share/GeoIP/GeoLite2-Country.mmdb
+  asn: /usr/share/GeoIP/GeoLite2-ASN.mmdb
+  # Using commercial DBs instead:
+  # country: /usr/share/GeoIP/GeoIP2-Country.mmdb
+  # isp: /usr/share/GeoIP/GeoIP2-ISP.mmdb
+dns:
+  resolvers:
+    - 127.0.0.1  # https://www.nic.cz/odvr/
+    - fe80::5928:ac64:f394:f1fc #2001:148f:ffff::1
+  check_www: False  # get A/AAAA/TLSA records for the `www.` subdomain (and use them for WEB_* stuff later, too)
+  auth_chaos_txt:  # CH TXT to query the domain's auth server for (eg. `authors.bind` or `fortune`)
+    - hostname.bind
+    - version.bind
+  # add 'additional' here to get more DNS records, more about that in Readme
+  # additional:
+  #  - SPF
+timeouts:
+  job: 80  # seconds, overall job (one domain crawl) duration when using dns-crawler-controller, jobs will fail after that and you can retry/abort them as needed
+  dns: 2  # seconds, timeout for dns queries
+  http: 2  # seconds, connection timeout for HTTP(S)/TLS requests
+  http_read: 5  # seconds, read timeout when saving web content
+  cache: 3600  # TTL for cached responses (used for mail and name servers), they will expire after this much seconds since their last use
+mail:
+  get_banners: False  # connect to SMTP servers and save banners they send (you might want to keep it off if your ISP is touchy about higher traffic on port 25, or just to save time)
+  ports: # ports to use for TLSA records (_PORT._tcp.…) and mailserver banners
+    - 25
+  max_ips_per_host: 4
+
+connectivity_check_ips: # IPs used for an initial connectivity check and getting a source addresses for HTTP(S) connections, you can set these to any public DNS (or anything that listens on port 53 UDP…) or `null` to disable the 4/6 protocol. These default ones are just CZ.NIC's public resolvers (CZ.NIC ODVR, https://www.nic.cz/odvr/).
+  ipv4: 127.0.0.1 
+  ipv6: fe80::5928:ac64:f394:f1fc
+save_worker_hostname: False # Include the worker hostname in JSON output, might be useful for debugging or determining if you ended up on some blacklist etc. 
